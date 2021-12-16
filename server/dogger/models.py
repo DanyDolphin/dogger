@@ -3,6 +3,37 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here.
 
+class Users(models.Model):
+    '''Users models.'''
+    first_name = models.CharField(min_length=2, max_length=100)
+    last_name = models.CharField(min_length=2, max_length=100)
+    email = models.EmailField(
+        'Dirección de email',
+        primary_key=True,
+        error_messages={
+            'unique': 'Ya existe un usuario con este email.'
+        }
+    )
+    password = models.CharField()
+
+    def __str__ (self):
+        return self.email
+
+class Walkers(models.Model):
+    '''Users models.'''
+    first_name = models.CharField(min_length=2, max_length=100)
+    last_name = models.CharField(min_length=2, max_length=100)
+    email = models.EmailField(
+        'Dirección de email',
+        primary_key=True,
+        error_messages={
+            'unique': 'Ya existe un usuario con este email.'
+        }
+    )
+    password = models.CharField()
+
+    def __str__ (self):
+        return self.email
 
 class Dogs(models.Model):
     name = models.CharField(max_length=50)
@@ -30,4 +61,24 @@ class Schedules(models.Model):
             ('saturday', 'Saturday'),
             ('sunday', 'Sunday')))
     hour = models.PositiveSmallIntegerField(validators=[MinValueValidator(7), MaxValueValidator(20)])
-    size = models.ForeignKey('DogSize', null=True, blank=True, on_delete=models.SET_NULL)
+    sizes = models.ManyToManyField(DogSize)
+
+    def __str__(self):
+        return '{} - {}:00 hrs'.format(
+            self.day_of_week__display,
+            self.hour
+        )
+
+class ScheduledWalks(models.Model):
+    start = models.TimeField()
+    end = models.TimeField()
+
+    dogs = models.ManyToManyField(Dogs)
+    users = models.ManyToManyField(Users)
+    schedule = models.ForeignKey(Schedules, on_delete=models.SET_NULL)
+    walker = models.ForeignKey(Walkers, on_delete=models.SET_NULL)
+
+    
+    
+
+

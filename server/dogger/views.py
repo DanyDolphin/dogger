@@ -12,7 +12,7 @@ from dogger.models import Schedules as SchedulesModel
 from dogger.models import ScheduledWalks as ScheduledWalksModel
 from dogger.models import Walkers as WalkersModel
 
-# Create your views here.	
+# Create your views here.
 
 class UsersDetailsView(APIView):
 	"""
