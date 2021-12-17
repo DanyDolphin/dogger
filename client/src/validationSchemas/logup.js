@@ -11,14 +11,14 @@ const logUpValidation = Yup.object().shape({
     .matches(/[^a-zA-Z\d]/g, 'Debe tener al menos un caracter especial')
     .min(8, 'Debe tener mínimo 8 caracteres')
     .required('Campo requerido'),
-  name: Yup.string()
+  first_name: Yup.string()
     .max(50, 'El nombre es demasiado largo')
     .required('Campo requerido'),
-  lastName: Yup.string()
+  last_name: Yup.string()
     .max(50, 'El apellido es demasiado largo')
     .required('Campo requerido'),
   phone: Yup.string()
-    .matches(/[0-9].{10,}/g, 'Debe tener diez digitos')
+    .matches(/^[0-9]{10}$/g, 'Debe tener diez digitos')
     .required('Campo requerido'),
   address: Yup.string()
     .required('Campo requerido'),

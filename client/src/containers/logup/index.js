@@ -9,27 +9,44 @@ import {
   Container,
   Title
 } from './styled'
+import axios from 'axios'
+import { API_BASE, handleAxiosErrors } from '../../utils/ajax'
+import Swal from 'sweetalert2'
+import { useHistory } from 'react-router-dom'
+import { Toast } from '../../utils/sweetalert-mixins'
 
 const initialValues = {
   email: '',
   password: '',
-  name: '',
-  lastName: '',
+  first_name: '',
+  last_name: '',
   phone: '',
   address: '',
   confirmPassword: ''
 }
 
 const LogUp = () => {
+
+  const history = useHistory()
+
+  const handleSubmit = async data => {
+    try {
+      await axios.post(API_BASE + '/users/signup/', data)
+      Swal.fire('Usuario creado', 'Ya puedes iniciar sesión con tu nuevo usuario', 'success')
+      history.push('/log-in')
+    } catch (err) {
+      handleAxiosErrors(err)
+      Toast.fire('', 'Error del servidor. Inténtalo más tarde', 'error')
+    }
+  }
+
   return (
     <Container>
       <Title>Registro</Title>
       <Formik
         initialValues={initialValues}
         validationSchema={logUpValidation}
-        onSubmit={(props) => {
-          console.log('formik props >>>', props)
-        }}
+        onSubmit={handleSubmit}
       >
         {({
           values,
@@ -42,20 +59,20 @@ const LogUp = () => {
         }) => (
           <>
             <Input
-              error={errors.name}
+              error={errors.first_name}
               label='Nombre(s)'
-              name='name'
+              name='first_name'
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.name}
+              value={values.first_name}
             />
             <Input
-              error={errors.lastName}
+              error={errors.last_name}
               label='Apellidos'
-              name='lastName'
+              name='last_name'
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.lastName}
+              value={values.last_name}
             />
             <Input
               error={errors.email}
@@ -77,7 +94,7 @@ const LogUp = () => {
             />
             <Input
               error={errors.address}
-              label='Correo'
+              label='Dirección'
               name='address'
               onBlur={handleBlur}
               onChange={handleChange}
@@ -102,6 +119,7 @@ const LogUp = () => {
               value={values.confirmPassword}
             />
             <Button
+              type="submit"
               disabled={!isValid || isSubmitting}
               onPress={handleSubmit}
               wide

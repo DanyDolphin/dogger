@@ -9,14 +9,15 @@ const Button = ({
   disabled,
   onPress,
   secondary,
-  wide
+  wide,
+  type
 }) => {
   return (
     <ButtonContainer
       disabled={disabled}
       onClick={onPress}
       secondary={secondary}
-      type='button'
+      type={type || 'button'}
       wide={wide}
     >
       <Text
