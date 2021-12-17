@@ -21,6 +21,12 @@ const Select = ({
                 onChange={onChange}
                 value={value}
             >
+                <SelectOption 
+                    default 
+                    value=""
+                >
+                    Selecciona una opción
+                </SelectOption>
                 {options.map((option, i) => (
                     <SelectOption
                         value={option.value}

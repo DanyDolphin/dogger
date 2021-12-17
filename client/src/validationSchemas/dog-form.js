@@ -5,7 +5,7 @@ const dogFormValidation = Yup.object().shape({
         .required('Campo requerido'),
     age: Yup.number()
         .required('Campo requerido'),
-    size: Yup.number()
+    size: Yup.string()
         .required('Campo requerido'),
 })
 

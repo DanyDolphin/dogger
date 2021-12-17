@@ -41,6 +41,8 @@ class LoginSerializer(serializers.Serializer):
         return self.context['user'], token.key
 
 class DogSerializer(serializers.ModelSerializer):
+    owner_id = serializers.CharField(write_only=True)
+    size_id = serializers.IntegerField(write_only=True)
     class Meta:
         model = Dogs
         fields = '__all__'

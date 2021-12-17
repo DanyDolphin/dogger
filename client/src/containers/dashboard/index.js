@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '../../components'
 import Modal from '../../components/modal'
 import { Title } from '../../components/navbar/styled'
+import { Toast } from '../../utils/sweetalert-mixins'
 import DogForm from '../dog-form'
 import { Container, Section, SectionTitle, Text } from './styled'
 
@@ -14,6 +14,12 @@ const Dashboard = () => {
     useEffect(() => {
         
     }, [])
+
+    const handleDogSaved = dog => {
+        setDogs([...dogs, dog])
+        setShowForm(false)
+        Toast.fire('', 'Lomito guardado con éxito', 'success')
+    }
 
     return <>
         <Container>
@@ -41,7 +47,9 @@ const Dashboard = () => {
             show={showForm} 
             onHide={e => setShowForm(false)}
         >
-            <DogForm/>
+            <DogForm
+                onSave={handleDogSaved}
+            />
         </Modal>
     </>
 }

@@ -97,7 +97,13 @@ class DogsView(APIView):
 		return Response(serializer.data)
 
 	def post(self, request, format=None):
-		serializer = DogSerializer(data=request.data)
+		data = dict(request.data)
+		data['owner_id'] = request.user.id
+
+		dog_size = DogSize.objects.get(size=request.data['size'])
+		data['size_id'] = dog_size.id
+
+		serializer = DogSerializer(data=data)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
