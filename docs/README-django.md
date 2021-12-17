@@ -27,3 +27,7 @@ Modelos proporcionados: Dogs, DogSize, Schedules
 ![Diagrama BD](./diagrama-BD.png)
 
 El modelo provisto de Schedules indica una relación uno-a-muchos entre el tamaño de perro y la agenda. Sin embargo, en las funcionalidades minimas se especifica que en un horario se pueden atender a una combinacion de tamaños diferentes de perros, por lo que se optó por usar una relación muchos-a-muchos.
+
+En la implementación de los modelos, se decidió mezclar los modelos de Users y Walker, debido a las siguientes razones:
+- Ambas entidades comparten los mismos atributos, por lo que se puede decir que heredan de la misma entidad en un diagrama ER extendido
+- Se puede configuar la app de Django para que use el model Users para el middleware de autenticación, con lo que facilitamos la autenticación de peticiones

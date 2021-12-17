@@ -1,25 +1,63 @@
-from django.shortcuts import render
+'''Vistas para la app de dogger'''
+
+# Django
 from django.contrib.auth.models import User as Auth
+from django.http import Http404
+
+# Django REST Framework
 from rest_framework.views import APIView
+from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from django.http import Http404
+from rest_framework.decorators import action
+
+# Dogger
 from dogger.serializers import *
 from dogger.models import Users as UsersModel
 from dogger.models import Dogs as DogsModel
 from dogger.models import DogSize as DogSizeModel
 from dogger.models import Schedules as SchedulesModel
 from dogger.models import ScheduledWalks as ScheduledWalksModel
-from dogger.models import Walkers as WalkersModel
 
 # Create your views here.
+
+class UsersView(ViewSet):
+	"""
+	Login and Signup
+	"""
+
+	@action(detail=False, methods=['post'])
+	def signup(self, request):
+		"""User sign up."""
+		serializer = UserSerializer(data=request.data)
+		serializer.is_valid(raise_exception=True)
+		serializer.save()
+		return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+	@action(detail=False, methods=['post'])
+	def login(self, request):
+		"""Login"""
+		serializer = LoginSerializer(data=request.data)
+		serializer.is_valid(raise_exception=True)
+		user, token = serializer.save()
+		data = {
+			'user': UserSerializer(user).data,
+			'access_token': token
+		}
+		return Response(data, status=status.HTTP_201_CREATED)
 
 class UsersDetailsView(APIView):
 	"""
 	Retrieve, update or delete a user instance.
 	"""
-	
-	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+	def get_permissions(self):
+		"""Assigns permissions based on actions."""
+		if self.action in ['signup', 'login']:
+			perms = [permissions.AllowAny]
+		else:
+			perms = [permissions.IsAuthenticatedOrReadOnly]
+		return [p() for p in perms]
 	
 	def get_object(self, pk):
 		try:
@@ -44,6 +82,7 @@ class UsersDetailsView(APIView):
 		account = Auth.objects.filter(pk)
 		account.delete()
 		return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class DogsView(APIView):
 	"""
@@ -233,7 +272,7 @@ class WalkersView(APIView):
 	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 	
 	def get(self, request, format=None):
-		users = WalkersModel.objects.all()
+		users = UsersModel.objects.filter(is_walker=True)
 		serializer = WalkerSerializer(users, many=True)
 		return Response(serializer.data)
 
@@ -253,8 +292,8 @@ class WalkersDetailsView(APIView):
 	
 	def get_object(self, pk):
 		try:
-			return WalkersModel.objects.get(pk=pk)
-		except Walkers.DoesNotExist:
+			return UsersModel.objects.get(pk=pk)
+		except Users.DoesNotExist:
 			raise Http404
 
 	def get(self, request, pk, format=None):

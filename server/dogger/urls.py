@@ -2,8 +2,13 @@ from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from dogger import views
 
+signup = views.UsersView.as_view({'post': 'signup'})
+
+login = views.UsersView.as_view({'post': 'login'})
+
 urlpatterns = [
-    path('users/', views.UsersView.as_view()),
+    path('users/signup/', signup),
+    path('users/login/', login),
     path('users/<int:pk>/', views.UsersDetailsView.as_view()),
     path('dogs/', views.DogsView.as_view()),
     path('dogs/<int:pk>/', views.DogsDetailsView.as_view()),

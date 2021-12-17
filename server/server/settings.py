@@ -41,10 +41,27 @@ INSTALLED_APPS = [
 
     # Django REST Framework
     'rest_framework',
+    'rest_framework.authtoken',
 
     # Custom apps
     'dogger'
 ]
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+
+    # Default autentication class for token authentication
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}
+
+# Users & Authentication
+AUTH_USER_MODEL = 'dogger.Users'
+
+# Default primary key type
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -20,5 +20,7 @@ from dogger import urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth', include('rest_framework.urls')),
-    path('api/v1/', include(urls))
+    path('api/v1/', include(urls)),
+
+    path('', include(('dogger.urls', 'dogger'), namespace='dogger'))
 ]

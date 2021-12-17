@@ -1,46 +1,96 @@
+'''Dogger models'''
+
+# Django
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db.models.fields import related
+
+# Django REST Framework
 
 # Create your models here.
 
-class Users(models.Model):
-    '''Users models.'''
-    first_name = models.CharField(min_length=2, max_length=100)
-    last_name = models.CharField(min_length=2, max_length=100)
+class UserManager(BaseUserManager):
+    """Custom user manager
+
+    needed to override create_user and create_superuser methods,
+    due to changing username with email as ID
+    """
+
+    def create_user(self, email, password, **extra_fields):
+        """
+        Creates and save a user with email and password
+        """
+        if not email:
+            raise ValueError(_('Debes ingresar un correo electrónico'))
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save()
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        """
+        Creates and save a superuser with email and password
+        """
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError(_('Superuser must have is_staff=True.'))
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError(_('Superuser must have is_superuser=True.'))
+        return self.create_user(email, password, **extra_fields)
+
+class Users(AbstractUser):
+    '''
+    Users models.
+    Extends from AbstractUser for authentication functionality
+    changes username with email and add data
+
+    This models works for Users and Walker
+    '''
+
+    # Deleting username field
+    username = None
+
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
     email = models.EmailField(
         'Dirección de email',
-        primary_key=True,
+        unique=True,
         error_messages={
             'unique': 'Ya existe un usuario con este email.'
         }
     )
-    password = models.CharField()
 
-    def __str__ (self):
+    # walker flag
+    is_walker = models.BooleanField(default=False)
+
+    # Primary key = email
+    USERNAME_FIELD = 'email'
+
+    # Required fields to create a user
+    REQUIRED_FIELDS = ['first_name', 'last_name']
+
+    # New user manager registered
+    objects = UserManager()
+
+    def __str__(self):
+        """Return username."""
         return self.email
 
-class Walkers(models.Model):
-    '''Users models.'''
-    first_name = models.CharField(min_length=2, max_length=100)
-    last_name = models.CharField(min_length=2, max_length=100)
-    email = models.EmailField(
-        'Dirección de email',
-        primary_key=True,
-        error_messages={
-            'unique': 'Ya existe un usuario con este email.'
-        }
-    )
-    password = models.CharField()
-
-    def __str__ (self):
+    def get_short_name(self):
+        """Return username."""
         return self.email
 
 class Dogs(models.Model):
     name = models.CharField(max_length=50)
     age = models.IntegerField()
     size = models.ForeignKey('DogSize', on_delete=models.DO_NOTHING)
-    owner = models.ForeignKey('Users', on_delete=models.CASCADE)
-    walker = models.ForeignKey('Walkers', null=True, blank=True, on_delete=models.SET_NULL)
+    owner = models.ForeignKey('Users', on_delete=models.CASCADE, related_name='%(class)s_owner')
+    walker = models.ForeignKey('Users', null=True, blank=True, on_delete=models.SET_NULL, related_name='%(class)s_walker')
 
     def __str__ (self):
         return self.name
@@ -63,6 +113,8 @@ class Schedules(models.Model):
     hour = models.PositiveSmallIntegerField(validators=[MinValueValidator(7), MaxValueValidator(20)])
     sizes = models.ManyToManyField(DogSize)
 
+    walker = models.ForeignKey('Users', on_delete=models.CASCADE)
+
     def __str__(self):
         return '{} - {}:00 hrs'.format(
             self.day_of_week__display,
@@ -75,8 +127,8 @@ class ScheduledWalks(models.Model):
 
     dogs = models.ManyToManyField(Dogs)
     users = models.ManyToManyField(Users)
-    schedule = models.ForeignKey(Schedules, on_delete=models.SET_NULL)
-    walker = models.ForeignKey(Walkers, on_delete=models.SET_NULL)
+    schedule = models.ForeignKey(Schedules, null=True, blank=True, on_delete=models.SET_NULL)
+    walker = models.ForeignKey(Users, null=True, blank=True, on_delete=models.SET_NULL, related_name='%(class)s_users')
 
     
     
