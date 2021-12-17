@@ -1,14 +1,11 @@
 import axios from 'axios'
-import { API_BASE } from '../utils/ajax'
+import { API_BASE, authenticatedOptions } from '../utils/ajax'
 
-const getDogs = () => axios.get(API_BASE + '/users/dogs/')
+const getDogs = (token) => 
+    axios.get(API_BASE + '/users/dogs/', authenticatedOptions(token))
 
 const createDog = (dog, token) => 
-    axios.post(API_BASE + '/dogs/', dog, {
-        headers: {
-            'Authorization': `Token ${token}`
-        }
-    })
+    axios.post(API_BASE + '/dogs/', dog, authenticatedOptions(token))
 
 export default {
     getDogs,

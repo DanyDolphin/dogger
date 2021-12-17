@@ -1,5 +1,11 @@
 export const API_BASE = 'http://localhost:8000'
 
+export const authenticatedOptions = (token) => ({
+    headers: {
+        'Authorization': `Token ${token}`
+    }  
+})
+
 export const handleAxiosErrors = (err) => {
     if (err.response) {
         // The request was made and the server responded with a status code

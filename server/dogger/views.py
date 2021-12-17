@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 
 # Dogger
 from dogger.serializers import *
@@ -45,6 +45,13 @@ class UsersView(ViewSet):
 			'access_token': token
 		}
 		return Response(data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_user_dogs(request):
+	dogs = Dogs.objects.filter(owner_id = request.user.id)
+	
+	return Response(DogSerializer(dogs, many=True).data)
 
 class UsersDetailsView(APIView):
 	"""

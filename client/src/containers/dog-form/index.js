@@ -25,7 +25,7 @@ const DogForm = ({ dog, token, onSave }) => {
 
     const handleSubmit = async data => {
         try {
-            const response = await dogsService.createDog(data, token)
+            let response = await dogsService.createDog(data, token)
             onSave(response.data)
         } catch (err) {
             handleAxiosErrors(err)

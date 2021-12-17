@@ -29,3 +29,26 @@ export const SectionTitle = styled.div`
     flex-direction: ${({column}) => column ? 'column' : 'row'};
     width: ${({shrinked}) => shrinked ? 'auto' : '100%'}
 `
+
+export const SectionListItem = styled.div`
+    display: flex;
+    align-self: start;
+    align-items: center;
+    padding: 0 24px;
+    margin-bottom: 16px;
+`
+
+export const SectionListItemImage = styled.img`
+    height: 48px;
+    width: 48px;
+    object-fit: cover;
+    margin-right: 16px
+`
+
+export const SectionListItemText = styled.p`
+    margin-right: 16px;
+    display: inline-block;
+    &:last-child {
+        margin-right: 0;
+    }
+`
