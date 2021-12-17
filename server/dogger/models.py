@@ -4,7 +4,8 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.db.models.fields import related
+
+from utils.validators import PHONE_VALIDATOR
 
 # Django REST Framework
 
@@ -64,6 +65,8 @@ class Users(AbstractUser):
             'unique': 'Ya existe un usuario con este email.'
         }
     )
+    telefono = models.CharField(validators=[PHONE_VALIDATOR], max_length=17, blank=True)
+    address = models.CharField(max_length=500)
 
     # walker flag
     is_walker = models.BooleanField(default=False)
@@ -96,7 +99,10 @@ class Dogs(models.Model):
         return self.name
 
 class DogSize(models.Model):
-    size = models.CharField(max_length=8)
+    size = models.CharField(max_length=8, 
+        choices=(('chico', 'Chico'),
+            ('mediano', 'Mediano'),
+            ('grande', 'Grande')))
 
     def __str__ (self):
         return self.size
