@@ -30,10 +30,10 @@ const LogIn = () => {
   const handleSubmit = async data => {
     try {
       const response = await axios.post(API_BASE + '/users/login/', data)
-      dispatch(loginAction({
-        user: response.data.user,
-        token: response.data.access_token
-      }))
+      dispatch(loginAction(
+        response.data.user,
+        response.data.access_token
+      ))
       Toast.fire('', 'Usuario loggeado con éxito', 'success')
       history.push('/')
     } catch (err) {

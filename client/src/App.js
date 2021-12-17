@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom'
 import { Navbar } from './components'
 import {
+  Dashboard,
   Home,
   LogIn,
   LogUp
@@ -48,6 +49,9 @@ function App(props) {
           </Route>
           <Route path="/log-up">
             <LogUp />
+          </Route>
+          <Route path="/dashboard">
+            <Dashboard />
           </Route>
           <AuthRoute 
             isLogged={isLogged}
